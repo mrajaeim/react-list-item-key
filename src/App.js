@@ -78,7 +78,7 @@ const Example = ({ defaults, uniqueID, setUniqueID }) => {
           </div>
         </div>
         <div className="badge badge-primary badge-outline">
-          New Field ID: {newID}
+          New Field ID: {newID.split('-')[0]}
         </div>
       </div>
       <div className="divider">Demo</div>
