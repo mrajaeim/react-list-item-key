@@ -3,6 +3,11 @@ import './style.css';
 import { useUID, useUIDSeed } from 'react-uid';
 import { v4 as uuidv4 } from 'uuid';
 
+const getItemID = (unique = true) => {
+  if (unique) return uuidv4();
+  return 'noid';
+};
+
 const Item = (props) => {
   return (
     <div className="form-group flex gap-3 mb-3">
@@ -14,14 +19,9 @@ const Item = (props) => {
   );
 };
 
-const Example = () => {
-  const [s, setS] = React.useState([
-    { name: 'Foo', id: uuidv4() },
-    { name: 'Bar', id: uuidv4() },
-  ]);
-  const [n, setN] = React.useState('no new');
-  const [u, setU] = React.useState(true);
-  const [i, setI] = React.useState(true);
+const Example = ({ defaults, uniqueID, setUniqueID }) => {
+  const [fields, setFields] = React.useState(defaults);
+  const [newID, setNewID] = React.useState('no new');
   const seed = useUIDSeed();
   const userInput = () => {
     const firstItems = Array.from(
@@ -31,24 +31,12 @@ const Example = () => {
       (item) => (item.value = 'It is ' + new Date().toTimeString())
     );
   };
-  const getItemID = () => {
-    if (u) return uuidv4();
-    return 'noid';
-  };
 
   const addItem = () => {
-    const id = getItemID();
-    setN(id);
-    setS([{ name: 'Baz', id }, ...s]);
+    const id = getItemID(uniqueID);
+    setNewID(id);
+    setFields([{ name: 'Baz', id }, ...fields]);
   };
-
-  React.useEffect(() => {
-    if (!i) {
-      setS((p) => p.map((item) => ({ ...item, id: getItemID() })));
-    } else {
-      setI(false);
-    }
-  }, [u]);
 
   return (
     <div>
@@ -80,9 +68,9 @@ const Example = () => {
               <input
                 type="checkbox"
                 className="checkbox checkbox-sm"
-                checked={u}
+                checked={uniqueID}
                 onChange={(e) => {
-                  setU(e.target.checked);
+                  setUniqueID(e.target.checked);
                 }}
               />
               <span className="label-text">Generate Unique ID</span>
@@ -90,7 +78,7 @@ const Example = () => {
           </div>
         </div>
         <div className="badge badge-primary badge-outline">
-          New Field ID: {n}
+          New Field ID: {newID}
         </div>
       </div>
       <div className="divider">Demo</div>
@@ -104,7 +92,7 @@ const Example = () => {
           <pre className="inline bg-white rounded p-[2px]">key=index</pre>
         </h3>
         <form className="form-horizontal">
-          {s.map((todo, index) => (
+          {fields.map((todo, index) => (
             <Item {...todo} key={index} />
           ))}
         </form>
@@ -114,7 +102,7 @@ const Example = () => {
           Better <pre className="inline bg-white rounded p-[2px]">key=id</pre>
         </h3>
         <form className="form-horizontal">
-          {s.map((todo) => (
+          {fields.map((todo) => (
             <Item {...todo} key={todo.id} />
           ))}
         </form>
@@ -125,7 +113,7 @@ const Example = () => {
           <pre className="inline bg-white rounded p-[2px]">key=seed(item)</pre>
         </h3>
         <form className="form-horizontal">
-          {s.map((todo) => (
+          {fields.map((todo) => (
             <Item {...todo} key={seed(todo)} />
           ))}
         </form>
@@ -140,9 +128,31 @@ const Example = () => {
 };
 
 export default function App() {
+  const [defaults, setDefaults] = React.useState([
+    { name: 'Foo', id: uuidv4() },
+    { name: 'Bar', id: uuidv4() },
+  ]);
+  const [uniqueID, setUniqueID] = React.useState(true);
+  const [init, setInit] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!init) {
+      setDefaults((prev) =>
+        prev.map((item) => ({ ...item, id: getItemID(uniqueID) }))
+      );
+    } else {
+      setInit(false);
+    }
+  }, [uniqueID]);
+
   return (
     <div>
-      <Example />
+      <Example
+        key={uuidv4()}
+        defaults={defaults}
+        uniqueID={uniqueID}
+        setUniqueID={setUniqueID}
+      />
     </div>
   );
 }
