@@ -119,10 +119,20 @@ const Example = ({ defaults, uniqueID, setUniqueID }) => {
         </form>
       </div>
       <div className="divider">Read More</div>
-      <a href="https://medium.com/p/e0349aece318">Read Article</a>
-      <br />
-      <br />
-      <a href="https://medium.com/p/e0349aece318">Reference</a>
+      <a
+        className="btn mr-3"
+        target="_blank"
+        href="https://medium.com/@mrajaeim/create-a-simple-react-app-to-master-react-list-item-keys-and-discover-best-practices-42645cc9e1f8"
+      >
+        Read Article
+      </a>
+      <a
+        className="btn"
+        target="_blank"
+        href="https://medium.com/p/e0349aece318"
+      >
+        See Reference
+      </a>
     </div>
   );
 };
